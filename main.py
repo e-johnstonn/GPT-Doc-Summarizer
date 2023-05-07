@@ -2,11 +2,11 @@ import streamlit as st
 import os
 import tempfile
 
-import openai
+
 
 from langchain.chat_models import ChatOpenAI
 
-from file_conversions import convert_file_to_text
+
 from utils import doc_loader, auto_summary_builder, check_key_validity, summary_prompt_creator
 from my_prompts import map_prompt, combine_prompt
 
@@ -24,14 +24,8 @@ if st.button("Summarize"):
     if uploaded_file is not None and valid is True:
         with st.spinner("Summarizing... please wait..."):
             with tempfile.NamedTemporaryFile(delete=False, suffix='.txt',) as temp_file:
-                file_name, file_extension = os.path.splitext(uploaded_file.name)
-                if file_extension != '.txt':
-                    text = convert_file_to_text(uploaded_file)
-                    temp_file.write(text)
-                    temp_file_path = temp_file.name
-                else:
-                    temp_file.write(uploaded_file.getvalue())
-                    temp_file_path = temp_file.name
+                temp_file.write(str(uploaded_file.getvalue()).encode('utf-8', errors='ignore'))
+                temp_file_path = temp_file.name
             if use_gpt_4:
                 llm = ChatOpenAI(openai_api_key=api_key, temperature=0, max_tokens=500, model_name='gpt-3.5-turbo')
             else:
