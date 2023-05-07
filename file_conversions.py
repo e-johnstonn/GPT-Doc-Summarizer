@@ -1,6 +1,5 @@
 import os
 import ebooklib
-import textract
 from ebooklib import epub
 from PyPDF2 import PdfFileReader
 from docx import Document

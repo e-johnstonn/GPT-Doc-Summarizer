@@ -12,7 +12,7 @@ from my_prompts import map_prompt, combine_prompt
 
 
 st.title("Document Summarizer")
-uploaded_file = st.file_uploader("Upload a document to summarize (.txt only)", type=['txt', 'pdf', 'epub', 'docx'])
+uploaded_file = st.file_uploader("Upload a document to summarize, 10k to 100k tokens works best!", type=['txt', 'pdf', 'epub', 'docx'])
 api_key = st.text_input("Enter your API key here")
 use_gpt_4 = st.checkbox("Use GPT-4 for the final prompt (recommended, requires GPT-4 API access)")
 
