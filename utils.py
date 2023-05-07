@@ -136,4 +136,3 @@ def check_key_validity(api_key):
         return "API key is invalid or OpenAI is having issues."
 
 
-check_key_validity('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')
