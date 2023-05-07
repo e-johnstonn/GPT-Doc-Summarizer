@@ -79,6 +79,7 @@ def summary_from_summary_docs(summary_docs, initial_chain, final_sum_list, api_k
     else:
         max_tokens = 3800 - int(count)
         model = 'gpt-3.5-turbo'
+    print(summaries)
     final_llm = ChatOpenAI(openai_api_key=api_key, temperature=0, max_tokens=max_tokens, model_name=model)
     final_sum_list[2] = final_llm
     final_sum_chain = summarize_chain_creator(final_sum_list)
@@ -137,4 +138,12 @@ def check_key_validity(api_key):
         print('API key is invalid or OpenAI is having issues.')
         print(e)
         return "API key is invalid or OpenAI is having issues."
+
+
+
+
+
+
+
+
 

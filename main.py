@@ -9,7 +9,6 @@ from utils import doc_loader, auto_summary_builder, check_key_validity, summary_
 from my_prompts import map_prompt, combine_prompt
 from file_conversions import pdf_to_text
 
-
 st.title("Document Summarizer")
 uploaded_file = st.file_uploader("Upload a document to summarize, 10k to 100k tokens works best!", type=['txt',  'pdf'])
 api_key = st.text_input("Enter your API key here")
@@ -18,6 +17,7 @@ use_gpt_4 = st.checkbox("Use GPT-4 for the final prompt (STRONGLY recommended, r
 
 st.sidebar.markdown('# Made by: [Ethan](https://github.com/e-johnstonn)')
 st.sidebar.markdown('# Git link: [Docsummarizer](https://github.com/e-johnstonn/docsummarizer)')
+
 
 if st.button("Summarize"):
     valid = check_key_validity(api_key)
@@ -38,7 +38,7 @@ if st.button("Summarize"):
             final_prompt_list = summary_prompt_creator(combine_prompt, 'text', llm)
             doc = doc_loader(temp_file_path)
             summary = auto_summary_builder(doc, 10, initial_chain, final_prompt_list, api_key, use_gpt_4)
-            st.write(summary)
+            st.markdown(summary, unsafe_allow_html=True)
             os.unlink(temp_file_path)
     elif uploaded_file is None:
         st.warning("Please upload a file.")

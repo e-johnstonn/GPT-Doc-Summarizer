@@ -9,12 +9,15 @@ FULL SUMMARY:
 
 
 combine_prompt = """
-Combine the provided section summaries into a cohesive, well-formatted, and easy-to-read final summary. 
-The section summaries will be enclosed in triple backticks. 
-Ensure all important details from each section are included and presented in a clear and comprehensive manner.
+Read all the provided summaries from a larger document. They will be enclosed in triple backticks. 
+Synthesize their info into a well-formatted easy-to-read synopsis, structured like an essay that summarizes their info. 
+Do not simply reword the provided text. Do not copy the structure from the provided text.
+Avoid repetition. 
+Preceding the synopsis, write a short, bullet form list of key takeaways.
+Format in HTML. Text should be divided into paragraphs. Paragraphs should be indented. 
 
 '''{text}'''
 
-FULL VERBOSE SUMMARY:
+
 """
 
