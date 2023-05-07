@@ -69,4 +69,7 @@ validators==0.20.0
 watchdog==3.0.0
 yarl==1.9.2
 zipp==3.15.0
+EbookLib==0.18
+docx==0.2.4
+PyPDF2==3.0.1
 
