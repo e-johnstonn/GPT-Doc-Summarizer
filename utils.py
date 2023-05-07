@@ -13,7 +13,7 @@ import tiktoken
 import numpy as np
 
 
-def doc_loader(document):
+def doc_loader(document): # takes pdf or txt
     loader = TextLoader(document, encoding='utf-8')
     return loader.load()
 

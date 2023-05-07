@@ -2,19 +2,19 @@ import streamlit as st
 import os
 import tempfile
 
-
-
 from langchain.chat_models import ChatOpenAI
 
 
 from utils import doc_loader, auto_summary_builder, check_key_validity, summary_prompt_creator
 from my_prompts import map_prompt, combine_prompt
+from file_conversions import pdf_to_text
 
 
 st.title("Document Summarizer")
-uploaded_file = st.file_uploader("Upload a document to summarize, 10k to 100k tokens works best!", type=['txt'])
+uploaded_file = st.file_uploader("Upload a document to summarize, 10k to 100k tokens works best!", type=['txt',  'pdf'])
 api_key = st.text_input("Enter your API key here")
 use_gpt_4 = st.checkbox("Use GPT-4 for the final prompt (STRONGLY recommended, requires GPT-4 API access)")
+
 
 st.sidebar.markdown('# Made by: [Ethan](https://github.com/e-johnstonn)')
 st.sidebar.markdown('# Git link: [Docsummarizer](https://github.com/e-johnstonn/docsummarizer)')
@@ -24,8 +24,12 @@ if st.button("Summarize"):
     if uploaded_file is not None and valid is True:
         with st.spinner("Summarizing... please wait..."):
             with tempfile.NamedTemporaryFile(delete=False, suffix='.txt',) as temp_file:
-                temp_file.write(uploaded_file.getvalue())
-                temp_file_path = temp_file.name
+                if uploaded_file.type == 'application/pdf':
+                    temp_file.write(pdf_to_text(uploaded_file))
+                    temp_file_path = temp_file.name
+                else:
+                    temp_file.write(uploaded_file.getvalue())
+                    temp_file_path = temp_file.name
             if use_gpt_4:
                 llm = ChatOpenAI(openai_api_key=api_key, temperature=0, max_tokens=500, model_name='gpt-3.5-turbo')
             else:
@@ -37,7 +41,7 @@ if st.button("Summarize"):
             st.write(summary)
             os.unlink(temp_file_path)
     elif uploaded_file is None:
-        st.warning("Please upload a .txt file.")
+        st.warning("Please upload a file.")
     else:
         st.warning(check_key_validity(api_key))
 
