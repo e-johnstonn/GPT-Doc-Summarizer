@@ -1,6 +1,6 @@
 map_prompt = """
 You will be given a single section from a text. This will be enclosed in triple backticks.
-Your goal is to give a summary of the section so that a reader will have a full and complete understanding of it says.
+Your goal is to give a verbose, detailed summary of the section so that a reader will have a full and complete understanding of it says.
 Your response should fully encompass what was covered in the section.
 
 '''{text}'''

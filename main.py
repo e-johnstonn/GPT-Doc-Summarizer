@@ -12,9 +12,9 @@ from my_prompts import map_prompt, combine_prompt
 
 
 st.title("Document Summarizer")
-uploaded_file = st.file_uploader("Upload a document to summarize, 10k to 100k tokens works best!", type=['txt', 'pdf', 'epub', 'docx'])
+uploaded_file = st.file_uploader("Upload a document to summarize, 10k to 100k tokens works best!", type=['txt'])
 api_key = st.text_input("Enter your API key here")
-use_gpt_4 = st.checkbox("Use GPT-4 for the final prompt (recommended, requires GPT-4 API access)")
+use_gpt_4 = st.checkbox("Use GPT-4 for the final prompt (STRONGLY recommended, requires GPT-4 API access)")
 
 st.sidebar.markdown('# Made by: [Ethan](https://github.com/e-johnstonn)')
 st.sidebar.markdown('# Git link: [Docsummarizer](https://github.com/e-johnstonn/docsummarizer)')
@@ -24,7 +24,7 @@ if st.button("Summarize"):
     if uploaded_file is not None and valid is True:
         with st.spinner("Summarizing... please wait..."):
             with tempfile.NamedTemporaryFile(delete=False, suffix='.txt',) as temp_file:
-                temp_file.write(str(uploaded_file.getvalue()).encode('utf-8', errors='ignore'))
+                temp_file.write(uploaded_file.getvalue())
                 temp_file_path = temp_file.name
             if use_gpt_4:
                 llm = ChatOpenAI(openai_api_key=api_key, temperature=0, max_tokens=500, model_name='gpt-3.5-turbo')
