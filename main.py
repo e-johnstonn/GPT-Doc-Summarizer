@@ -26,7 +26,7 @@ if st.button("Summarize"):
             with tempfile.NamedTemporaryFile(delete=False, suffix='.txt',) as temp_file:
                 file_name, file_extension = os.path.splitext(uploaded_file)
                 if file_extension != '.txt':
-                    text = convert_file_to_text(uploaded_file)
+                    text = convert_file_to_text(uploaded_file.name)
                     temp_file.write(text)
                     temp_file_path = temp_file.name
                 else:
