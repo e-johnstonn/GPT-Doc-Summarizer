@@ -65,18 +65,21 @@ def summarize_chain_creator(prompt_list):
     return chain
 
 
-def summary_from_summary_docs(summary_docs, initial_chain, final_sum_list, api_key):
+def summary_from_summary_docs(summary_docs, initial_chain, final_sum_list, api_key, use_gpt_4):
     # this is really fucking ugly but oh well it works
     doc_summaries = []
     for doc in summary_docs:
-        print('Summarizing an initial doc.')
         summary = initial_chain.run([doc])
         doc_summaries.append(summary)
     summaries = '\n'.join(doc_summaries)
-    print('Done initial summaries.')
     count = token_counter(summaries)
-    max_tokens = 7500 - int(count)
-    final_llm = ChatOpenAI(openai_api_key=api_key, temperature=0, max_tokens=max_tokens, model_name='gpt-4')
+    if use_gpt_4:
+        max_tokens = 7500 - int(count)
+        model = 'gpt-4'
+    else:
+        max_tokens = 3800 - int(count)
+        model = 'gpt-3.5-turbo'
+    final_llm = ChatOpenAI(openai_api_key=api_key, temperature=0, max_tokens=max_tokens, model_name=model)
     final_sum_list[2] = final_llm
     final_sum_chain = summarize_chain_creator(final_sum_list)
     summaries = Document(page_content=summaries)
@@ -108,15 +111,15 @@ def auto_summary_docs_from_doc(text_document, num_clusters, api_key):
     return summary_docs
 
 
-def auto_summary_from_doc(doc, num_clusters, initial_chain, final_prompt_list, api_key):
+def auto_summary_from_doc(doc, num_clusters, initial_chain, final_prompt_list, api_key, use_gpt_4):
     summary_docs = auto_summary_docs_from_doc(doc, num_clusters, api_key)
-    output = summary_from_summary_docs(summary_docs, initial_chain, final_prompt_list, api_key)
+    output = summary_from_summary_docs(summary_docs, initial_chain, final_prompt_list, api_key, use_gpt_4)
     return output
 
 
-def auto_summary_builder(doc, num_clusters, initial_prompt_list, final_prompt_list, api_key):
+def auto_summary_builder(doc, num_clusters, initial_prompt_list, final_prompt_list, api_key, use_gpt_4):
     initial_chain = summarize_chain_creator(initial_prompt_list)
-    summary = auto_summary_from_doc(doc, num_clusters, initial_chain, final_prompt_list, api_key)
+    summary = auto_summary_from_doc(doc, num_clusters, initial_chain, final_prompt_list, api_key, use_gpt_4)
     return summary
 
 
@@ -135,5 +138,3 @@ def check_key_validity(api_key):
         print(e)
         return "API key is invalid or OpenAI is having issues."
 
-
-check_key_validity('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')
