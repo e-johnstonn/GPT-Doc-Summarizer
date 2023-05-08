@@ -13,7 +13,7 @@ import tiktoken
 import numpy as np
 
 
-def doc_loader(document): # takes pdf or txt
+def doc_loader(document):  # takes pdf or txt
     loader = TextLoader(document, encoding='utf-8')
     return loader.load()
 
@@ -149,7 +149,10 @@ def check_gpt_4(api_key):
         return 'No GPT-4 access. Uncheck GPT-4 to continue.'
 
 
-
-
-
+def token_limit(doc, maximum: 200000): #checks how many tokens are in a doc, returns false if it exceeds the limit set
+    text = doc_to_text(doc)
+    count = token_counter(text)
+    if count > maximum:
+        return False
+    return True
 
