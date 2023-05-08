@@ -16,7 +16,7 @@ api_key = st.text_input("Leave this box empty to use the webapp for free. If run
 use_gpt_4 = st.checkbox("Use GPT-4 for the final prompt (STRONGLY recommended, requires GPT-4 API access)", value=True)
 
 
-st.sidebar.markdown('# Made by: [Ethan](https://github.com/e-johnstonn)')
+st.sidebar.markdown('# Author: [Ethan](https://github.com/e-johnstonn)')
 st.sidebar.markdown('# Git link: [Docsummarizer](https://github.com/e-johnstonn/docsummarizer)')
 
 
