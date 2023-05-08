@@ -156,3 +156,11 @@ def token_limit(doc, maximum: 200000): #checks how many tokens are in a doc, ret
         return False
     return True
 
+
+def token_minimum(doc, minimum:2000):
+    text = doc_to_text(doc)
+    count = token_counter(text)
+    if count < minimum:
+        return False
+    return True
+

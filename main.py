@@ -5,7 +5,8 @@ import tempfile
 from langchain.chat_models import ChatOpenAI
 
 
-from utils import doc_loader, auto_summary_builder, check_key_validity, summary_prompt_creator, check_gpt_4, token_limit
+from utils import doc_loader, auto_summary_builder, check_key_validity, summary_prompt_creator, check_gpt_4, \
+    token_limit, token_minimum
 from my_prompts import map_prompt, combine_prompt
 from file_conversions import pdf_to_text
 
@@ -43,12 +44,15 @@ if st.button('Summarize (click once and wait)'):
             final_prompt_list = summary_prompt_creator(combine_prompt, 'text', llm)
             doc = doc_loader(temp_file_path)
             limit_check = token_limit(doc, 120000)
-            if limit_check:
+            min_check = token_minimum(doc, 2000)
+            if limit_check and min_check:
                 summary = auto_summary_builder(doc, 10, initial_chain, final_prompt_list, api_key, use_gpt_4)
                 st.markdown(summary, unsafe_allow_html=True)
                 os.unlink(temp_file_path)
-            else:
+            elif not limit_check:
                 st.warning('File too big!')
+            elif not min_check:
+                st.warning('File too small!')
     elif uploaded_file is None:
         st.warning("Please upload a file.")
     elif valid is True:
