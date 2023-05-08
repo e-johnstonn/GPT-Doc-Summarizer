@@ -11,7 +11,7 @@ from file_conversions import pdf_to_text
 
 st.title("Document Summarizer")
 uploaded_file = st.file_uploader("Upload a document to summarize, 10k to 100k tokens works best!", type=['txt',  'pdf'])
-api_key = st.text_input("Enter your API key here")
+api_key = st.text_input("Enter your API key here: LEAVE EMPTY FOR FREE USE! DO NOT ENTER YOUR API KEY ON UNKNOWN WEBSITES!")
 use_gpt_4 = st.checkbox("Use GPT-4 for the final prompt (STRONGLY recommended, requires GPT-4 API access)")
 
 
@@ -19,12 +19,7 @@ st.sidebar.markdown('# Made by: [Ethan](https://github.com/e-johnstonn)')
 st.sidebar.markdown('# Git link: [Docsummarizer](https://github.com/e-johnstonn/docsummarizer)')
 
 
-
-if 'summarize_button_clicked' not in st.session_state:
-    st.session_state.summarize_button_clicked = False
-
-
-if st.button('Summarize', disabled=st.session_state.summarize_button_clicked):
+if st.button('Summarize (click once and wait)'):
     st.session_state.summarize_button_clicked = True
     valid = check_key_validity(api_key)
     valid_gpt_4 = True
@@ -47,7 +42,7 @@ if st.button('Summarize', disabled=st.session_state.summarize_button_clicked):
             initial_chain = summary_prompt_creator(map_prompt, 'text', llm)
             final_prompt_list = summary_prompt_creator(combine_prompt, 'text', llm)
             doc = doc_loader(temp_file_path)
-            limit_check = token_limit(doc, 8000)
+            limit_check = token_limit(doc, 120000)
             if limit_check:
                 summary = auto_summary_builder(doc, 10, initial_chain, final_prompt_list, api_key, use_gpt_4)
                 st.markdown(summary, unsafe_allow_html=True)
@@ -60,5 +55,4 @@ if st.button('Summarize', disabled=st.session_state.summarize_button_clicked):
         st.warning(check_gpt_4(api_key))
     else:
         st.warning(check_key_validity(api_key))
-    st.session_state.summarize_button_clicked = False
 
