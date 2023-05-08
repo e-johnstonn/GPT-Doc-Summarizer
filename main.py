@@ -11,8 +11,8 @@ from file_conversions import pdf_to_text
 
 st.title("Document Summarizer")
 uploaded_file = st.file_uploader("Upload a document to summarize, 10k to 100k tokens works best!", type=['txt',  'pdf'])
-api_key = st.text_input("Enter your API key here: LEAVE EMPTY FOR FREE USE! DO NOT ENTER YOUR API KEY ON UNKNOWN WEBSITES!")
-use_gpt_4 = st.checkbox("Use GPT-4 for the final prompt (STRONGLY recommended, requires GPT-4 API access)")
+api_key = st.text_input("Leave this box empty to use the webapp for free. If running locally or this webapp hits its limit, you can enter your own API key here.")
+use_gpt_4 = st.checkbox("Use GPT-4 for the final prompt (STRONGLY recommended, requires GPT-4 API access)", value=True)
 
 
 st.sidebar.markdown('# Made by: [Ethan](https://github.com/e-johnstonn)')
