@@ -139,7 +139,14 @@ def check_key_validity(api_key):
         return "API key is invalid or OpenAI is having issues."
 
 
-
+def check_gpt_4(api_key):
+    try:
+        ChatOpenAI(openai_api_key=api_key, model_name='gpt-4').call_as_llm('Hi')
+        print('User has GPT-4 access')
+        return True
+    except Exception as e:
+        print('No GPT-4 access')
+        return 'No GPT-4 access. Uncheck GPT-4 to continue.'
 
 
 

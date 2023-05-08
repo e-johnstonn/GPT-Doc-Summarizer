@@ -5,7 +5,7 @@ import tempfile
 from langchain.chat_models import ChatOpenAI
 
 
-from utils import doc_loader, auto_summary_builder, check_key_validity, summary_prompt_creator
+from utils import doc_loader, auto_summary_builder, check_key_validity, summary_prompt_creator, check_gpt_4
 from my_prompts import map_prompt, combine_prompt
 from file_conversions import pdf_to_text
 
@@ -21,7 +21,10 @@ st.sidebar.markdown('# Git link: [Docsummarizer](https://github.com/e-johnstonn/
 
 if st.button("Summarize"):
     valid = check_key_validity(api_key)
-    if uploaded_file is not None and valid is True:
+    valid_gpt_4 = True
+    if use_gpt_4:
+        valid_gpt_4 = check_gpt_4(api_key)
+    if uploaded_file is not None and valid is True and valid_gpt_4 is True:
         with st.spinner("Summarizing... please wait..."):
             with tempfile.NamedTemporaryFile(delete=False, suffix='.txt',) as temp_file:
                 if uploaded_file.type == 'application/pdf':
@@ -42,6 +45,8 @@ if st.button("Summarize"):
             os.unlink(temp_file_path)
     elif uploaded_file is None:
         st.warning("Please upload a file.")
+    elif valid is True:
+        st.warning(check_gpt_4(api_key))
     else:
         st.warning(check_key_validity(api_key))
 
