@@ -53,3 +53,4 @@ def determine_optimal_clusters(inertia_values):
         distances.append(d)
     optimal_clusters = distances.index(max(distances)) + 2
     return optimal_clusters
+

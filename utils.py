@@ -90,7 +90,7 @@ def kmeans_clustering(vectors, num_clusters=None):
     return kmeans
 
 
-def get_closest_vectors(vectors, kmeans, num_clusters):
+def get_closest_vectors(vectors, kmeans):
     """
     Get the closest vectors to the cluster centers of a K-Means clustering object.
 
@@ -98,15 +98,15 @@ def get_closest_vectors(vectors, kmeans, num_clusters):
 
     :param kmeans: A K-Means clustering object.
 
-    :param num_clusters: The number of clusters to use.
-
     :return: A list of indices of the closest vectors to the cluster centers.
     """
     closest_indices = []
-    for i in range(num_clusters):
+    print(len(kmeans.cluster_centers_))
+    for i in range(len(kmeans.cluster_centers_)):
         distances = np.linalg.norm(vectors - kmeans.cluster_centers_[i], axis=1)
         closest_index = np.argmin(distances)
         closest_indices.append(closest_index)
+
     selected_indices = sorted(closest_indices)
     return selected_indices
 
@@ -206,7 +206,7 @@ def split_by_tokens(doc, num_clusters, ratio=5, minimum_tokens=200, maximum_toke
     return split_doc
 
 
-def extract_summary_docs(langchain_document, num_clusters, api_key):
+def extract_summary_docs(langchain_document, num_clusters, api_key, find_clusters):
     """
     Automatically convert a single langchain Document object into a list of smaller langchain Document objects that represent each cluster.
 
@@ -216,17 +216,25 @@ def extract_summary_docs(langchain_document, num_clusters, api_key):
 
     :param api_key: The OpenAI API key to use for summarization.
 
+    :param find_clusters: Whether to find the optimal number of clusters to use.
+
     :return: A list of langchain Document objects.
     """
     split_document = split_by_tokens(langchain_document, num_clusters)
     vectors = embed_docs(split_document, api_key)
-    kmeans = kmeans_clustering(vectors, num_clusters)
-    indices = get_closest_vectors(vectors, kmeans, num_clusters)
+
+    if find_clusters:
+        kmeans = kmeans_clustering(vectors, None)
+
+    else:
+        kmeans = kmeans_clustering(vectors, num_clusters)
+
+    indices = get_closest_vectors(vectors, kmeans)
     summary_docs = map_vectors_to_docs(indices, split_document)
     return summary_docs
 
 
-def doc_to_final_summary(langchain_document, num_clusters, initial_prompt_list, final_prompt_list, api_key, use_gpt_4):
+def doc_to_final_summary(langchain_document, num_clusters, initial_prompt_list, final_prompt_list, api_key, use_gpt_4, find_clusters=False):
     """
     Automatically summarize a single langchain Document object using multiple langchain summarize chains.
 
@@ -242,10 +250,12 @@ def doc_to_final_summary(langchain_document, num_clusters, initial_prompt_list, 
 
     :param use_gpt_4: Whether to use GPT-4 or GPT-3.5-turbo for summarization.
 
+    :param find_clusters: Whether to automatically find the optimal number of clusters to use.
+
     :return: A string containing the summary.
     """
     initial_prompt_list = create_summarize_chain(initial_prompt_list)
-    summary_docs = extract_summary_docs(langchain_document, num_clusters, api_key)
+    summary_docs = extract_summary_docs(langchain_document, num_clusters, api_key, find_clusters)
     output = create_summary_from_docs(summary_docs, initial_prompt_list, final_prompt_list, api_key, use_gpt_4)
     return output
 

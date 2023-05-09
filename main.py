@@ -15,15 +15,16 @@ def main():
     api_key = st.text_input("Free usage cap has been hit! Enter your own API key here, or contact the author if you don't have one.")
     st.markdown('[Author email](mailto:ethanujohnston@gmail.com)')
     use_gpt_4 = st.checkbox("Use GPT-4 for the final prompt (STRONGLY recommended, requires GPT-4 API access)", value=True)
-
+    find_clusters = st.checkbox('Find optimal clusters (experimental, may take a while, but saves on tokens)', value=False)
     st.sidebar.markdown('# Made by: [Ethan](https://github.com/e-johnstonn)')
     st.sidebar.markdown('# Git link: [Docsummarizer](https://github.com/e-johnstonn/docsummarizer)')
 
+
     if st.button('Summarize (click once and wait)'):
-        process_summarize_button(uploaded_file, api_key, use_gpt_4)
+        process_summarize_button(uploaded_file, api_key, use_gpt_4, find_clusters)
 
 
-def process_summarize_button(uploaded_file, api_key, use_gpt_4):
+def process_summarize_button(uploaded_file, api_key, use_gpt_4, find_clusters):
     """
     Processes the summarize button, and displays the summary if input and doc size are valid
 
@@ -32,6 +33,8 @@ def process_summarize_button(uploaded_file, api_key, use_gpt_4):
     :param api_key: The API key entered by the user
 
     :param use_gpt_4: Whether to use GPT-4 or not
+
+    :param find_clusters: Whether to find optimal clusters or not, experimental
 
     :return: None
     """
@@ -49,7 +52,12 @@ def process_summarize_button(uploaded_file, api_key, use_gpt_4):
             os.unlink(temp_file_path)
             return
 
-        summary = doc_to_final_summary(doc, 10, initial_prompt_list, final_prompt_list, api_key, use_gpt_4)
+        if find_clusters:
+            summary = doc_to_final_summary(doc, 10, initial_prompt_list, final_prompt_list, api_key, use_gpt_4, find_clusters)
+
+        else:
+            summary = doc_to_final_summary(doc, 10, initial_prompt_list, final_prompt_list, api_key, use_gpt_4)
+
         st.markdown(summary, unsafe_allow_html=True)
         os.unlink(temp_file_path)
 
