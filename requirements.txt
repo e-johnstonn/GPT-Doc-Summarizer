@@ -103,3 +103,5 @@ xlrd==1.2.0
 XlsxWriter==3.1.0
 yarl==1.9.2
 zipp==3.15.0
+
+nltk~=3.8.1
