@@ -136,7 +136,7 @@ def check_key_validity(api_key):
     except Exception as e:
         print('API key is invalid or OpenAI is having issues.')
         print(e)
-        return "API key is invalid or OpenAI is having issues."
+        return False
 
 
 def check_gpt_4(api_key):
@@ -146,7 +146,7 @@ def check_gpt_4(api_key):
         return True
     except Exception as e:
         print('No GPT-4 access')
-        return 'No GPT-4 access. Uncheck GPT-4 to continue.'
+        return False
 
 
 def token_limit(doc, maximum: 200000): #checks how many tokens are in a doc, returns false if it exceeds the limit set
