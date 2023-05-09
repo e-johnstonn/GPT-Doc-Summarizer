@@ -40,7 +40,7 @@ def check_gpt_4(api_key):
         return False
 
 
-def token_limit(doc, maximum: 200000):
+def token_limit(doc, maximum=200000):
     """
     Check if a document has more tokens than a specified maximum.
 
@@ -58,7 +58,7 @@ def token_limit(doc, maximum: 200000):
     return True
 
 
-def token_minimum(doc, minimum:2000):
+def token_minimum(doc, minimum=2000):
     """
     Check if a document has more tokens than a specified minimum.
 

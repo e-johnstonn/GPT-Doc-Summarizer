@@ -13,6 +13,8 @@ import tiktoken
 
 import numpy as np
 
+from elbow import calculate_inertia, plot_elbow, determine_optimal_clusters
+
 
 def doc_loader(file_path: str):
     """
@@ -69,16 +71,21 @@ def embed_docs(docs, api_key):
     return vectors
 
 
-def kmeans_clustering(vectors, num_clusters):
+def kmeans_clustering(vectors, num_clusters=None):
     """
     Cluster a list of vectors using K-Means clustering.
 
     :param vectors: A list of vectors to cluster.
 
-    :param num_clusters: The number of clusters to use.
+    :param num_clusters: The number of clusters to use. If None, the optimal number of clusters will be determined.
 
     :return: A K-Means clustering object.
     """
+    if num_clusters is None:
+        inertia_values = calculate_inertia(vectors)
+        num_clusters = determine_optimal_clusters(inertia_values)
+        print(f'Optimal number of clusters: {num_clusters}')
+
     kmeans = KMeans(n_clusters=num_clusters, random_state=42).fit(vectors)
     return kmeans
 

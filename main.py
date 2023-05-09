@@ -62,11 +62,11 @@ def validate_doc_size(doc):
 
     :return: True if the doc is valid, False otherwise
     """
-    if not token_limit(doc, 120000):
+    if not token_limit(doc, 400000):
         st.warning('File too big!')
         return False
 
-    if not token_minimum(doc, 200):
+    if not token_minimum(doc, 2000):
         st.warning('File too small!')
         return False
     return True
