@@ -13,10 +13,10 @@ def main():
     st.title("Document Summarizer")
     uploaded_file = st.file_uploader("Upload a document to summarize, 10k to 100k tokens works best!", type=['txt', 'pdf'])
     api_key = st.text_input("Free usage cap has been hit! Enter your own API key here, or contact the author if you don't have one.")
+    st.sidebar.markdown('[Author email](mailto:ethanujohnston@gmail.com)')
     use_gpt_4 = st.checkbox("Use GPT-4 for the final prompt (STRONGLY recommended, requires GPT-4 API access)", value=True)
 
     st.sidebar.markdown('# Made by: [Ethan](https://github.com/e-johnstonn)')
-    st.sidebar.markdown('[Author email](ethanujohnston@gmail.com)')
     st.sidebar.markdown('# Git link: [Docsummarizer](https://github.com/e-johnstonn/docsummarizer)')
 
     if st.button('Summarize (click once and wait)'):
