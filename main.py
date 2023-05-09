@@ -1,14 +1,12 @@
 import os
-import tempfile
 import streamlit as st
 
-from langchain.chat_models import ChatOpenAI
 from utils import (
-    doc_loader, auto_summary_builder, check_key_validity, summary_prompt_creator, check_gpt_4,
-    token_limit, token_minimum
+    doc_loader, summary_prompt_creator, doc_to_final_summary
 )
 from my_prompts import map_prompt, combine_prompt
-from file_conversions import pdf_to_text
+from streamlit_app_utils import check_gpt_4, check_key_validity, create_temp_file, create_chat_model, \
+    token_limit, token_minimum
 
 
 def main():
@@ -26,13 +24,24 @@ def main():
 
 
 def process_summarize_button(uploaded_file, api_key, use_gpt_4):
+    """
+    Processes the summarize button, and displays the summary if input and doc size are valid
+
+    :param uploaded_file: The file uploaded by the user
+
+    :param api_key: The API key entered by the user
+
+    :param use_gpt_4: Whether to use GPT-4 or not
+
+    :return: None
+    """
     if not validate_input(uploaded_file, api_key, use_gpt_4):
         return
 
     with st.spinner("Summarizing... please wait..."):
         temp_file_path = create_temp_file(uploaded_file)
         llm = create_chat_model(api_key, use_gpt_4)
-        initial_chain = summary_prompt_creator(map_prompt, 'text', llm)
+        initial_prompt_list = summary_prompt_creator(map_prompt, 'text', llm)
         final_prompt_list = summary_prompt_creator(combine_prompt, 'text', llm)
         doc = doc_loader(temp_file_path)
 
@@ -40,12 +49,42 @@ def process_summarize_button(uploaded_file, api_key, use_gpt_4):
             os.unlink(temp_file_path)
             return
 
-        summary = auto_summary_builder(doc, 10, initial_chain, final_prompt_list, api_key, use_gpt_4)
+        summary = doc_to_final_summary(doc, 10, initial_prompt_list, final_prompt_list, api_key, use_gpt_4)
         st.markdown(summary, unsafe_allow_html=True)
         os.unlink(temp_file_path)
 
 
+
+def validate_doc_size(doc):
+    """
+    Validates the size of the document
+
+    :param doc: doc to validate
+
+    :return: True if the doc is valid, False otherwise
+    """
+    if not token_limit(doc, 120000):
+        st.warning('File too big!')
+        return False
+
+    if not token_minimum(doc, 200):
+        st.warning('File too small!')
+        return False
+    return True
+
+
 def validate_input(uploaded_file, api_key, use_gpt_4):
+    """
+    Validates the user input, and displays warnings if the input is invalid
+
+    :param uploaded_file: The file uploaded by the user
+
+    :param api_key: The API key entered by the user
+
+    :param use_gpt_4: Whether the user wants to use GPT-4
+
+    :return: True if the input is valid, False otherwise
+    """
     if uploaded_file is None:
         st.warning("Please upload a file.")
         return False
@@ -60,32 +99,6 @@ def validate_input(uploaded_file, api_key, use_gpt_4):
 
     return True
 
-
-def create_temp_file(uploaded_file):
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.txt') as temp_file:
-        if uploaded_file.type == 'application/pdf':
-            temp_file.write(pdf_to_text(uploaded_file))
-        else:
-            temp_file.write(uploaded_file.getvalue())
-    return temp_file.name
-
-
-def create_chat_model(api_key, use_gpt_4):
-    if use_gpt_4:
-        return ChatOpenAI(openai_api_key=api_key, temperature=0, max_tokens=500, model_name='gpt-3.5-turbo')
-    else:
-        return ChatOpenAI(openai_api_key=api_key, temperature=0, max_tokens=250, model_name='gpt-3.5-turbo')
-
-
-def validate_doc_size(doc):
-    if not token_limit(doc, 120000):
-        st.warning('File too big!')
-        return False
-
-    if not token_minimum(doc, 200):
-        st.warning('File too small!')
-        return False
-    return True
 
 if __name__ == '__main__':
     main()
