@@ -6,6 +6,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.chains.summarize import load_summarize_chain
 
+
 from sklearn.cluster import KMeans
 
 import tiktoken
