@@ -1,4 +1,4 @@
-## Document Summarizer
+# Document Summarizer
 
 Document Summarizer is a tool that takes a text document (PDF or TXT) and generates a concise summary using GPT-4 or GPT-3.5-turbo. It's built with Python and Streamlit and leverages the langchain library for text processing.
 
