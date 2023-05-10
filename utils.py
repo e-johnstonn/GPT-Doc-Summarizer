@@ -8,7 +8,7 @@ from langchain.chains.summarize import load_summarize_chain
 
 import streamlit as st
 
-from sklearn.cluster import KMeans
+from sklearn.cluster import MiniBatchKMeans
 
 import tiktoken
 
@@ -89,7 +89,7 @@ def kmeans_clustering(vectors, num_clusters=None):
         num_clusters = determine_optimal_clusters(inertia_values)
         print(f'Optimal number of clusters: {num_clusters}')
 
-    kmeans = KMeans(n_clusters=num_clusters, random_state=42).fit(vectors)
+    kmeans = MiniBatchKMeans(n_clusters=num_clusters, random_state=42).fit(vectors)
     return kmeans
 
 
