@@ -14,9 +14,10 @@ import tiktoken
 
 import numpy as np
 
-from elbow import calculate_inertia, plot_elbow, determine_optimal_clusters
+from elbow import calculate_inertia, determine_optimal_clusters
 
 import time
+
 
 def doc_loader(file_path: str):
     """
