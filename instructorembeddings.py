@@ -4,7 +4,7 @@
 # model = ie.INSTRUCTOR('hkunlp/instructor-xl')
 
 """
-Experiemental alternative to using OpenAI embeddings. Large computational cost. 
+Experimental alternative to using OpenAI embeddings. Large computational cost.
 
 Uncomment, install requirements, and replace call to embed_docs in extract_summary_docs in utils.py to use.
 
