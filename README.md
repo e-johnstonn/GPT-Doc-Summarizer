@@ -4,6 +4,8 @@ This is a tool that takes a text document (PDF or TXT) or YouTube transcript and
 While the final output is generated with either GPT3.5 or GPT4 (the LLM's that power ChatGPT), only a small portion of the overall document is used in the prompts. Before any call is made to either LLM, the document is separated into
 small sections that contain the majority of the meaning of the document. 
 
+Demo it here: https://gptdoc-summarizer.streamlit.app/
+
 ## Features
 
 - Supports PDF and TXT file formats
