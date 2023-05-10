@@ -18,6 +18,8 @@ from elbow import calculate_inertia, determine_optimal_clusters
 
 import time
 
+import urllib.parse
+
 
 def doc_loader(file_path: str):
     """
@@ -290,6 +292,33 @@ def summary_prompt_creator(prompt, input_var, llm):
     return prompt_list
 
 
+def extract_video_id(video_url):
+    """
+    Extract the YouTube video ID from a YouTube video URL.
+
+    :param video_url: The URL of the YouTube video.
+
+    :return: The ID of the YouTube video.
+    """
+    parsed_url = urllib.parse.urlparse(video_url)
+    if parsed_url.hostname == 'youtu.be':
+        return parsed_url.path[1:]
+
+    elif parsed_url.hostname in ('www.youtube.com', 'youtube.com'):
+
+        if parsed_url.path == '/watch':
+            p = urllib.parse.parse_qs(parsed_url.query)
+            return p.get('v', [None])[0]
+
+        elif parsed_url.path.startswith('/embed/'):
+            return parsed_url.path.split('/embed/')[1]
+
+        elif parsed_url.path.startswith('/v/'):
+            return parsed_url.path.split('/v/')[1]
+
+    return None
+
+
 def transcript_loader(video_url):
     """
     Load the transcript of a YouTube video into a loaded langchain Document object.
@@ -298,7 +327,7 @@ def transcript_loader(video_url):
 
     :return: A loaded langchain Document object.
     """
-    transcript = YoutubeLoader.from_youtube_url(video_url)
+    transcript = YoutubeLoader(video_id=extract_video_id(video_url))
     loaded = transcript.load()
     return loaded
 
