@@ -185,7 +185,7 @@ def create_summary_from_docs(summary_docs, initial_chain, final_sum_list, api_ke
     final_summary = final_sum_chain.run([summaries])
 
     progress.progress(1.0)  # Remove this line and all references to it if you are not using Streamlit.
-    time.sleep(0.1)  # Remove this line and all references to it if you are not using Streamlit.
+    time.sleep(0.4)  # Remove this line and all references to it if you are not using Streamlit.
     progress.empty()  # Remove this line and all references to it if you are not using Streamlit.
 
     return final_summary
