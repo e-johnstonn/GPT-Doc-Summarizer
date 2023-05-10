@@ -8,7 +8,7 @@ from langchain.chains.summarize import load_summarize_chain
 
 import streamlit as st
 
-from sklearn.cluster import MiniBatchKMeans
+from sklearn.cluster import MiniBatchKMeans, KMeans
 
 import tiktoken
 
@@ -19,6 +19,8 @@ from elbow import calculate_inertia, determine_optimal_clusters
 import time
 
 import urllib.parse
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 def doc_loader(file_path: str):
@@ -91,7 +93,7 @@ def kmeans_clustering(vectors, num_clusters=None):
         num_clusters = determine_optimal_clusters(inertia_values)
         print(f'Optimal number of clusters: {num_clusters}')
 
-    kmeans = MiniBatchKMeans(n_clusters=num_clusters, random_state=42).fit(vectors)
+    kmeans = KMeans(n_clusters=num_clusters, random_state=42).fit(vectors)
     return kmeans
 
 
@@ -143,6 +145,44 @@ def create_summarize_chain(prompt_list):
     return chain
 
 
+def parallelize_summaries(summary_docs, initial_chain, progress_bar, max_workers=4):
+    """
+    Summarize a list of loaded langchain Document objects using multiple langchain summarize chains in parallel.
+
+    :param summary_docs: A list of loaded langchain Document objects to summarize.
+
+    :param initial_chain: A langchain summarize chain to use for summarization.
+
+    :param progress_bar: A streamlit progress bar to display the progress of the summarization.
+
+    :param max_workers: The maximum number of workers to use for parallelization.
+
+    :return: A list of summaries.
+    """
+    doc_summaries = []
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        future_to_doc = {executor.submit(initial_chain.run, [doc]): doc for doc in summary_docs}
+
+        for future in as_completed(future_to_doc):
+            doc = future_to_doc[future]
+
+            try:
+                summary = future.result()
+
+            except Exception as exc:
+                print(f'{doc} generated an exception: {exc}')
+
+            else:
+                doc_summaries.append(summary)
+                num = (len(doc_summaries)) / (len(summary_docs) + 1)
+                progress_bar.progress(num)  # Remove this line and all references to it if you are not using Streamlit.
+    return doc_summaries
+
+
+
+
+
 def create_summary_from_docs(summary_docs, initial_chain, final_sum_list, api_key, use_gpt_4):
     """
     Summarize a list of loaded langchain Document objects using multiple langchain summarize chains.
@@ -159,17 +199,11 @@ def create_summary_from_docs(summary_docs, initial_chain, final_sum_list, api_ke
 
     :return: A string containing the summary.
     """
-    doc_summaries = []
 
     progress = st.progress(0)  # Create a progress bar to show the progress of summarization.
     # Remove this line and all references to it if you are not using Streamlit.
-    total = len(summary_docs) + 1 # Remove this line and all references to it if you are not using Streamlit.
 
-    for doc in summary_docs:
-        summary = initial_chain.run([doc])
-        doc_summaries.append(summary)
-
-        progress.progress(len(doc_summaries) / total)  # Remove this line and all references to it if you are not using Streamlit.
+    doc_summaries = parallelize_summaries(summary_docs, initial_chain, progress_bar=progress)
 
     summaries = '\n'.join(doc_summaries)
     count = token_counter(summaries)
