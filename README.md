@@ -1,6 +1,10 @@
-# **GPT 4/3.5 Powered Document Summarizer**
+# **GPT 3.5/4 Powered Document Summarizer**
 
-Document Summarizer is a tool that takes a text document (PDF or TXT) and generates a concise summary using GPT-4 or GPT-3.5-turbo. It's built with Python and Streamlit and leverages the langchain library for text processing.
+This is a tool that takes a text document (PDF or TXT) or YouTube transcript and generates a concise summary using GPT-4 or GPT-3.5-turbo. It's built with Python and Streamlit and leverages the langchain library for text processing.
+While the final output is generated with either GPT3.5 or GPT4 (the LLM's that power ChatGPT), only a small portion of the overall document is used in the prompts. Before any call is made to either LLM, the document is separated into
+small sections that contain the majority of the meaning of the document. 
+
+Demo it here: https://gptdoc-summarizer.streamlit.app/
 
 ## Features
 
