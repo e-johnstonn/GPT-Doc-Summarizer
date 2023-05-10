@@ -6,6 +6,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.prompts import PromptTemplate
 from langchain.chains.summarize import load_summarize_chain
 
+import streamlit as st
 
 from sklearn.cluster import KMeans
 
@@ -15,6 +16,7 @@ import numpy as np
 
 from elbow import calculate_inertia, plot_elbow, determine_optimal_clusters
 
+import time
 
 def doc_loader(file_path: str):
     """
@@ -156,9 +158,15 @@ def create_summary_from_docs(summary_docs, initial_chain, final_sum_list, api_ke
     """
     doc_summaries = []
 
+    progress = st.progress(0)  # Create a progress bar to show the progress of summarization.
+    # Remove this line and all references to it if you are not using Streamlit.
+    total = len(summary_docs) + 1 # Remove this line and all references to it if you are not using Streamlit.
+
     for doc in summary_docs:
         summary = initial_chain.run([doc])
         doc_summaries.append(summary)
+
+        progress.progress(len(doc_summaries) / total)  # Remove this line and all references to it if you are not using Streamlit.
 
     summaries = '\n'.join(doc_summaries)
     count = token_counter(summaries)
@@ -175,6 +183,11 @@ def create_summary_from_docs(summary_docs, initial_chain, final_sum_list, api_ke
     final_sum_chain = create_summarize_chain(final_sum_list)
     summaries = Document(page_content=summaries)
     final_summary = final_sum_chain.run([summaries])
+
+    progress.progress(1.0)  # Remove this line and all references to it if you are not using Streamlit.
+    time.sleep(0.1)  # Remove this line and all references to it if you are not using Streamlit.
+    progress.empty()  # Remove this line and all references to it if you are not using Streamlit.
+
     return final_summary
 
 
