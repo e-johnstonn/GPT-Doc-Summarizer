@@ -3,8 +3,6 @@ from sklearn.cluster import KMeans
 
 import matplotlib.pyplot as plt
 
-from scipy.spatial.distance import cdist
-
 
 def calculate_inertia(vectors, max_clusters=12):
     """

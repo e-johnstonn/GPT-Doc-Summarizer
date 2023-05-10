@@ -1,4 +1,4 @@
-from langchain.document_loaders import TextLoader
+from langchain.document_loaders import TextLoader, YoutubeLoader
 from langchain.text_splitter import TokenTextSplitter
 from langchain.schema import Document
 from langchain.chat_models import ChatOpenAI
@@ -59,7 +59,7 @@ def doc_to_text(document):
     return text
 
 
-def embed_docs(docs, api_key):
+def embed_docs_openai(docs, api_key):
     """
     Embed a list of loaded langchain Document objects into a list of vectors.
 
@@ -235,7 +235,7 @@ def extract_summary_docs(langchain_document, num_clusters, api_key, find_cluster
     :return: A list of langchain Document objects.
     """
     split_document = split_by_tokens(langchain_document, num_clusters)
-    vectors = embed_docs(split_document, api_key)
+    vectors = embed_docs_openai(split_document, api_key)
 
     if find_clusters:
         kmeans = kmeans_clustering(vectors, None)
@@ -289,6 +289,18 @@ def summary_prompt_creator(prompt, input_var, llm):
     prompt_list = [prompt, input_var, llm]
     return prompt_list
 
+
+def transcript_loader(video_url):
+    """
+    Load the transcript of a YouTube video into a loaded langchain Document object.
+
+    :param video_url: The URL of the YouTube video to load the transcript of.
+
+    :return: A loaded langchain Document object.
+    """
+    transcript = YoutubeLoader.from_youtube_url(video_url)
+    loaded = transcript.load()
+    return loaded
 
 
 
