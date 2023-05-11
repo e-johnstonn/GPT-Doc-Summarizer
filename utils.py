@@ -44,7 +44,7 @@ def token_counter(text: str):
     :return: The number of tokens in the text.
     """
     encoding = tiktoken.get_encoding('cl100k_base')
-    token_list = encoding.encode(text)
+    token_list = encoding.encode(text, disallowed_special=())
     tokens = len(token_list)
     return tokens
 
