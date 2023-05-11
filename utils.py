@@ -60,7 +60,21 @@ def doc_to_text(document):
     text = ''
     for i in document:
         text += i.page_content
+    special_tokens = ['>|endoftext|', '<|fim_prefix|', '<|fim_middle|', '<|fim_suffix|', '<|endofprompt|']
+    words = text.split()
+    filtered_words = [word for word in words if word not in special_tokens]
+    text = ' '.join(filtered_words)
     return text
+
+def remove_special_tokens(docs):
+    special_tokens = ['>|endoftext|', '<|fim_prefix|', '<|fim_middle|', '<|fim_suffix|', '<|endofprompt|>']
+    for doc in docs:
+        content = doc.page_content
+        for special in special_tokens:
+            content = content.replace(special, '')
+            doc.page_content = content
+    return docs
+
 
 
 def embed_docs_openai(docs, api_key):
@@ -73,6 +87,7 @@ def embed_docs_openai(docs, api_key):
 
     :return: A list of vectors.
     """
+    docs = remove_special_tokens(docs)
     embeddings = OpenAIEmbeddings(openai_api_key=api_key)
     vectors = embeddings.embed_documents([x.page_content for x in docs])
     return vectors
