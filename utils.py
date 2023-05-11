@@ -174,9 +174,8 @@ def parallelize_summaries(summary_docs, initial_chain, progress_bar, max_workers
     :return: A list of summaries.
     """
     doc_summaries = []
-
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        future_to_doc = {executor.submit(initial_chain.run, [doc]): doc for doc in summary_docs}
+        future_to_doc = {executor.submit(initial_chain.run, [doc]): doc.page_content for doc in summary_docs}
 
         for future in as_completed(future_to_doc):
             doc = future_to_doc[future]
