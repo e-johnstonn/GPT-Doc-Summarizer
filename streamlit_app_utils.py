@@ -70,7 +70,6 @@ def token_minimum(doc, minimum=2000):
     """
     text = doc_to_text(doc)
     count = token_counter(text)
-    print(count)
     if count < minimum:
         return False
     return True

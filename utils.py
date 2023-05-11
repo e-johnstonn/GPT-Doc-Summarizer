@@ -8,7 +8,7 @@ from langchain.chains.summarize import load_summarize_chain
 
 import streamlit as st
 
-from sklearn.cluster import MiniBatchKMeans, KMeans
+from sklearn.cluster import KMeans
 
 import tiktoken
 
@@ -123,7 +123,6 @@ def get_closest_vectors(vectors, kmeans):
     :return: A list of indices of the closest vectors to the cluster centers.
     """
     closest_indices = []
-    print(len(kmeans.cluster_centers_))
     for i in range(len(kmeans.cluster_centers_)):
         distances = np.linalg.norm(vectors - kmeans.cluster_centers_[i], axis=1)
         closest_index = np.argmin(distances)
