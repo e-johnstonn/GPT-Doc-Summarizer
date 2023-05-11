@@ -26,3 +26,4 @@ Can use instructor models other than instructor-xl.
 #         vector = model.encode(x.page_content)
 #         vectors.append(vector)
 #     return vectors
+
