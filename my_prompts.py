@@ -10,9 +10,10 @@ FULL SUMMARY:
 
 file_combine = """
 Read all the provided summaries from a larger document. They will be enclosed in triple backticks. 
-Synthesize their info into a well-formatted easy-to-read synopsis, structured like an essay that summarizes their info. 
+Determine what the overall document is about and summarize it with this information in mind.
+Synthesize the info into a well-formatted easy-to-read synopsis, structured like an essay that summarizes them cohesively. 
 Do not simply reword the provided text. Do not copy the structure from the provided text.
-Avoid repetition. 
+Avoid repetition. Connect all the ideas together.
 Preceding the synopsis, write a short, bullet form list of key takeaways.
 Format in HTML. Text should be divided into paragraphs. Paragraphs should be indented. 
 
@@ -32,10 +33,11 @@ FULL SUMMARY:
 
 
 youtube_combine = """
-Read all the provided summaries from a youtube transcript. They will be enclosed in triple backticks. 
-Synthesize their info into a well-formatted easy-to-read synopsis, structured like an essay that summarizes their info. 
+Read all the provided summaries from a youtube transcript. They will be enclosed in triple backticks.
+Determine what the overall video is about and summarize it with this information in mind. 
+Synthesize the info into a well-formatted easy-to-read synopsis, structured like an essay that summarizes them cohesively. 
 Do not simply reword the provided text. Do not copy the structure from the provided text.
-Avoid repetition. 
+Avoid repetition. Connect all the ideas together.
 Preceding the synopsis, write a short, bullet form list of key takeaways.
 Format in HTML. Text should be divided into paragraphs. Paragraphs should be indented. 
 
