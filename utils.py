@@ -7,20 +7,16 @@ from langchain.prompts import PromptTemplate
 from langchain.chains.summarize import load_summarize_chain
 
 import streamlit as st
-
 from sklearn.cluster import KMeans
-
 import tiktoken
-
 import numpy as np
-
 from elbow import calculate_inertia, determine_optimal_clusters
-
 import time
-
 import urllib.parse
-
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dotenv import dotenv_values
+
+config = dotenv_values(".env")
 
 
 def doc_loader(file_path: str):
@@ -88,7 +84,9 @@ def embed_docs_openai(docs, api_key):
     :return: A list of vectors.
     """
     docs = remove_special_tokens(docs)
-    embeddings = OpenAIEmbeddings(openai_api_key=api_key)
+    # embeddings = OpenAIEmbeddings(openai_api_key=api_key)
+    print("MY_API_KEY:",config["MY_API_KEY"])
+    embeddings = OpenAIEmbeddings(openai_api_key=config["MY_API_KEY"])
     vectors = embeddings.embed_documents([x.page_content for x in docs])
     return vectors
 
@@ -194,9 +192,7 @@ def parallelize_summaries(summary_docs, initial_chain, progress_bar, max_workers
 
 
 
-
-
-def create_summary_from_docs(summary_docs, initial_chain, final_sum_list, api_key, use_gpt_4):
+def create_summary_from_docs(summary_docs, initial_chain, final_sum_list, final_ppve_prompt_list, final_superbill_prompt_list, api_key, use_gpt_4):
     """
     Summarize a list of loaded langchain Document objects using multiple langchain summarize chains.
 
@@ -216,6 +212,7 @@ def create_summary_from_docs(summary_docs, initial_chain, final_sum_list, api_ke
     progress = st.progress(0)  # Create a progress bar to show the progress of summarization.
     # Remove this line and all references to it if you are not using Streamlit.
 
+    final_summary_list = []
     doc_summaries = parallelize_summaries(summary_docs, initial_chain, progress_bar=progress)
 
     summaries = '\n'.join(doc_summaries)
@@ -229,16 +226,29 @@ def create_summary_from_docs(summary_docs, initial_chain, final_sum_list, api_ke
         max_tokens = 3800 - int(count)
         model = 'gpt-3.5-turbo'
 
+    summaries = Document(page_content=summaries)
+
     final_sum_list[2] = ChatOpenAI(openai_api_key=api_key, temperature=0, max_tokens=max_tokens, model_name=model)
     final_sum_chain = create_summarize_chain(final_sum_list)
-    summaries = Document(page_content=summaries)
     final_summary = final_sum_chain.run([summaries])
+    final_summary_list.append(final_summary)
+
+    final_ppve_prompt_list[2] = ChatOpenAI(openai_api_key=api_key, temperature=0, max_tokens=max_tokens, model_name=model)
+    final_ppve_sum_chain = create_summarize_chain(final_ppve_prompt_list)
+    final_ppve_summary = final_ppve_sum_chain.run([summaries])
+    final_summary_list.append(final_ppve_summary)
+
+    final_superbill_prompt_list[2] = ChatOpenAI(openai_api_key=api_key, temperature=0, max_tokens=max_tokens, model_name=model)
+    final_superbill_sum_chain = create_summarize_chain(final_superbill_prompt_list)
+    final_superbill_summary = final_superbill_sum_chain.run([summaries])
+    final_summary_list.append(final_superbill_summary)
 
     progress.progress(1.0)  # Remove this line and all references to it if you are not using Streamlit.
     time.sleep(0.4)  # Remove this line and all references to it if you are not using Streamlit.
     progress.empty()  # Remove this line and all references to it if you are not using Streamlit.
 
-    return final_summary
+
+    return final_summary_list
 
 
 def split_by_tokens(doc, num_clusters, ratio=5, minimum_tokens=200, maximum_tokens=2000):
@@ -297,7 +307,8 @@ def extract_summary_docs(langchain_document, num_clusters, api_key, find_cluster
     return summary_docs
 
 
-def doc_to_final_summary(langchain_document, num_clusters, initial_prompt_list, final_prompt_list, api_key, use_gpt_4, find_clusters=False):
+# def doc_to_final_summary(langchain_document, num_clusters, initial_prompt_list, final_prompt_list, api_key, use_gpt_4, find_clusters=False):
+def doc_to_final_summary(langchain_document, num_clusters, initial_prompt_list, final_prompt_list, final_ppve_prompt_list, final_superbill_prompt_list, api_key, use_gpt_4, find_clusters=False):
     """
     Automatically summarize a single langchain Document object using multiple langchain summarize chains.
 
@@ -317,10 +328,28 @@ def doc_to_final_summary(langchain_document, num_clusters, initial_prompt_list, 
 
     :return: A string containing the summary.
     """
+
+    # initialize the langchain (work queue?)
     initial_prompt_list = create_summarize_chain(initial_prompt_list)
+    
+    # build the kmeans clusters
     summary_docs = extract_summary_docs(langchain_document, num_clusters, api_key, find_clusters)
-    output = create_summary_from_docs(summary_docs, initial_prompt_list, final_prompt_list, api_key, use_gpt_4)
-    return output
+
+    # create the string result
+    output = create_summary_from_docs(summary_docs, initial_prompt_list, final_prompt_list, final_ppve_prompt_list, final_superbill_prompt_list, api_key, use_gpt_4)
+    
+    # result = {
+    #     'pn_summary': create_summary_from_docs(summary_docs, initial_prompt_list, final_prompt_list, api_key, use_gpt_4),
+    #     'ppve_summary': create_summary_from_docs(summary_docs, initial_prompt_list, final_ppve_prompt_list, api_key, use_gpt_4),
+    #     'superbill_summary': create_summary_from_docs(summary_docs, initial_prompt_list, final_superbill_prompt_list, api_key, use_gpt_4),
+    # }
+    result = {
+        'pn_summary': output[0],
+        'ppve_summary': output[1],
+        'superbill_summary': output[2],
+    }
+    print('result from doc_to_sumary', result)
+    return result
 
 
 def summary_prompt_creator(prompt, input_var, llm):

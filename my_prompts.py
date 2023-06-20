@@ -69,3 +69,29 @@ Format in HTML. Text should be divided into paragraphs. Paragraphs should be ind
 
 
 """
+
+ppve_combine = """
+Read all the provided summarized progress notes from a larger document. They will be enclosed in triple backticks. 
+Determine what the overall progress note is about and create a post visit email for the patient. Include action items for the patient if it make sense.
+Target less than 100 words. Use friendly language. Target 5th grade reading level. 
+Do not simply reword the provided text. Do not copy the structure from the provided text.
+Avoid repetition. Connect all the ideas together.
+Format in HTML. 
+
+'''{text}'''
+
+
+"""
+
+superbill_combine = """
+Read all the provided summarized progress notes from a larger document. They will be enclosed in triple backticks. 
+Determine what the overall progress note is about and create a superbill for the patient so the patient can submit for insurance claim purposes.
+Synthesize the info into a well-formatted, easy-to-read, structured it like a typical superbill for a therapy patient.
+Make it professional.
+Do not simply reword the provided text. Do not copy the structure from the provided text.
+Avoid repetition. Connect all the ideas together.
+
+'''{text}'''
+
+
+"""
