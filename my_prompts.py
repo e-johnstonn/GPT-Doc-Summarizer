@@ -45,3 +45,27 @@ Format in HTML. Text should be divided into paragraphs. Paragraphs should be ind
 
 
 """
+
+pn_map = """
+You will be given a single section from a text. This will be enclosed in triple backticks.
+Please provide a progress note for the patient for this therapy session of the following section excerpt, create something that make sense to enter into an EMR while maintaining clarity and conciseness.
+
+'''{text}'''
+
+FULL SUMMARY:
+"""
+
+
+pn_combine = """
+Read all the provided summarized progress notes from a larger document. They will be enclosed in triple backticks. 
+Determine what the overall progress note is about and create a shorter progress note from it.
+Synthesize the info into a well-formatted, easy-to-read, structured it like a typical progress note for a therapy patient.
+Do not simply reword the provided text. Do not copy the structure from the provided text.
+Avoid repetition. Connect all the ideas together.
+Preceding the progress note, write a short, bullet form list of key takeaways.
+Format in HTML. Text should be divided into paragraphs. Paragraphs should be indented. 
+
+'''{text}'''
+
+
+"""

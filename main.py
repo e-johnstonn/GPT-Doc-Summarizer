@@ -4,7 +4,7 @@ import streamlit as st
 from utils import (
     doc_loader, summary_prompt_creator, doc_to_final_summary,
 )
-from my_prompts import file_map, file_combine, youtube_map, youtube_combine
+from my_prompts import file_map, file_combine, youtube_map, youtube_combine, pn_map, pn_combine
 from streamlit_app_utils import check_gpt_4, check_key_validity, create_temp_file, create_chat_model, \
     token_limit, token_minimum
 
@@ -69,13 +69,24 @@ def process_summarize_button(file_or_transcript, api_key, use_gpt_4, find_cluste
             doc = doc_loader(temp_file_path)
             map_prompt = file_map
             combine_prompt = file_combine
+            
+            map_pn_prompt = pn_map
+            combine_pn_prompt = pn_combine
+
         else:
             doc = file_or_transcript
             map_prompt = youtube_map
             combine_prompt = youtube_combine
+            
+            map_pn_prompt = pn_map
+            combine_pn_prompt = pn_combine
+
         llm = create_chat_model(api_key, use_gpt_4)
         initial_prompt_list = summary_prompt_creator(map_prompt, 'text', llm)
         final_prompt_list = summary_prompt_creator(combine_prompt, 'text', llm)
+
+        initial_pn_prompt_list = summary_prompt_creator(map_pn_prompt, 'text', llm)
+        final_pn_prompt_list = summary_prompt_creator(combine_pn_prompt, 'text', llm)
 
         if not validate_doc_size(doc):
             if file:
@@ -87,8 +98,10 @@ def process_summarize_button(file_or_transcript, api_key, use_gpt_4, find_cluste
 
         else:
             summary = doc_to_final_summary(doc, 10, initial_prompt_list, final_prompt_list, api_key, use_gpt_4)
+            pn_summary = doc_to_final_summary(doc, 10, initial_pn_prompt_list, final_pn_prompt_list, api_key, use_gpt_4)
 
         st.markdown(summary, unsafe_allow_html=True)
+        st.markdown(pn_summary, unsafe_allow_html=True)
         if file:
             os.unlink(temp_file_path)
 
