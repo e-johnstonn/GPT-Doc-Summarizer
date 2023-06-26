@@ -6,7 +6,7 @@ from st_on_hover_tabs import on_hover_tabs
 from utils import (
     doc_loader, summary_prompt_creator, doc_to_final_summary,
 )
-from my_prompts import file_map, file_combine, youtube_map, youtube_combine, pn_map, pn_combine, ppve_combine, superbill_combine
+from my_prompts import file_map, file_combine, youtube_map, youtube_combine, pn_map, pn_combine, ppve_combine, superbill_combine, claims_combine
 from streamlit_app_utils import check_gpt_4, check_key_validity, create_temp_file, create_chat_model, \
     token_limit, token_minimum
 
@@ -99,6 +99,7 @@ def process_summarize_button(file_or_transcript, api_key, use_gpt_4, find_cluste
             combine_pn_prompt = pn_combine
             combine_ppve_prompt = ppve_combine
             combine_superbill_prompt = superbill_combine
+            combine_claims_prompt = superbill_combine
 
         else:
             doc = file_or_transcript
@@ -119,6 +120,7 @@ def process_summarize_button(file_or_transcript, api_key, use_gpt_4, find_cluste
 
         final_ppve_prompt_list = summary_prompt_creator(combine_ppve_prompt, 'text', llm)
         final_superbill_prompt_list = summary_prompt_creator(combine_superbill_prompt, 'text', llm)
+        final_claims_prompt_list = summary_prompt_creator(combine_claims_prompt, 'text', llm)
 
         if not validate_doc_size(doc):
             if file:
@@ -131,10 +133,11 @@ def process_summarize_button(file_or_transcript, api_key, use_gpt_4, find_cluste
         else:
             # summaries = doc_to_final_summary(doc, 10, initial_prompt_list, final_prompt_list, api_key, use_gpt_4) # don't need this for now
             # summary = summaries['summary']
-            summaries = doc_to_final_summary(doc, 10, initial_pn_prompt_list, final_pn_prompt_list, final_ppve_prompt_list, final_superbill_prompt_list, api_key, use_gpt_4)
+            summaries = doc_to_final_summary(doc, 10, initial_pn_prompt_list, final_pn_prompt_list, final_ppve_prompt_list, final_superbill_prompt_list, final_claims_prompt_list, api_key, use_gpt_4)
             pn_summary = summaries['pn_summary']
             ppve_summary = summaries['ppve_summary']
             superbill_summary = summaries['superbill_summary']
+            claims_summary = summaries['claims_summary']
 
         if pn_summary:
             st.markdown("#### Progress Note", unsafe_allow_html=True)
@@ -143,12 +146,15 @@ def process_summarize_button(file_or_transcript, api_key, use_gpt_4, find_cluste
             st.markdown("#### Post Visit Note")
             st.markdown(ppve_summary, unsafe_allow_html=True)
         if superbill_summary:    
-            st.markdown("#### Superbill & Claim Email Example")
+            st.markdown("#### Superbill Example")
             st.markdown(superbill_summary, unsafe_allow_html=True)
+        if claims_summary:    
+            st.markdown("#### Claim Email/Fax Example")
+            st.markdown(claims_summary, unsafe_allow_html=True)
 
         with st.sidebar:
-            tabs = on_hover_tabs(tabName=['Progress Note', 'Post Vist Note', 'Superbill'], 
-                                iconName=['money', 'money', 'money'], default_choice=0)
+            tabs = on_hover_tabs(tabName=['Progress Note', 'Post Vist Note', 'Superbill', 'Claims'], 
+                                iconName=['money', 'money', 'money', 'money'], default_choice=0)
             
         if file:
             os.unlink(temp_file_path)

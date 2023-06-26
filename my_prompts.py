@@ -95,3 +95,16 @@ Avoid repetition. Connect all the ideas together.
 
 
 """
+
+claims_combine = """
+Read all the provided summarized progress notes from a larger document. They will be enclosed in triple backticks. 
+Determine what the overall progress note is about and create a claims email from the psychiatrist to the patient's insurance company for reimbursement.
+Synthesize the info into a well-formatted, easy-to-read, structured it like a typical claims email for a therapy session.
+Make it professional.
+Do not simply reword the provided text. Do not copy the structure from the provided text.
+Avoid repetition. Connect all the ideas together.
+
+'''{text}'''
+
+
+"""
