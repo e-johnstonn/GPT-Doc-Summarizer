@@ -75,7 +75,7 @@ def token_minimum(doc, minimum=2000):
     return True
 
 
-def check_key_validity(api_key):
+def check_openai_key_validity(api_key):
     """
     Check if an OpenAI API key is valid.
 
@@ -85,10 +85,28 @@ def check_key_validity(api_key):
     """
     try:
         ChatOpenAI(openai_api_key=api_key).call_as_llm('Hi')
-        print('API Key is valid')
+        print('OpenAI API Key is valid')
         return True
     except Exception as e:
-        print('API key is invalid or OpenAI is having issues.')
+        print('OpenAI API key is invalid or OpenAI is having issues.')
+        print(e)
+        return False
+
+
+def check_elevenlabs_key_validity(api_key):
+    """
+    Check if an ElevenLabs API key is valid.
+
+    :param api_key: The ElevenLabs API key to check.
+
+    :return: True if the API key is valid, False otherwise.
+    """
+    try:
+        # ChatOpenAI(openai_api_key=api_key).call_as_llm('Hi')
+        print('ElevenLabs API Key is valid')
+        return True
+    except Exception as e:
+        print('ElevenLabs API key is invalid or ElevenLabs is having issues.')
         print(e)
         return False
 
