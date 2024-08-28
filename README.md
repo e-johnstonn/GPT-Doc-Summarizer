@@ -4,7 +4,7 @@ This is a tool that takes a text document (PDF or TXT) or YouTube transcript and
 While the final output is generated with the latest GPT family model from OpenAI, GPT-4O-Mini (one of the LLMs that powers ChatGPT), only a small portion of the overall document is used in the prompts. Before any call is made to either LLM, the document is separated into
 small sections that contain the majority of the meaning of the document. 
 
-Summarize your documents here (no API key required): https://gptdoc-summarizer.streamlit.app/
+Summarize your documents here (no API key required): https://gpt-document-summarizer.streamlit.app/
 
 ## Features
 
