@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
-from app.clustered_summary import ClusteredSummary
+from clustered_summary import ClusteredSummary
 from pdf_document import PdfDocument
 from summary import Summary
 from utils import count_tokens
@@ -25,11 +25,11 @@ def main():
     if input_method == "Enter a YouTube URL":
         youtube_url = st.text_input("Enter a YouTube URL")
 
-    st.sidebar.markdown("[Contact me here!](mailto:ethanujohnston@gmail.com)")
+    st.sidebar.markdown("# [Contact me by email!](mailto:ethanujohnston@gmail.com)")
     st.sidebar.markdown(
-        "[Check out my other projects!](https://github.com/e-johnstonn)"
+        "# [Check out my other projects!](https://github.com/e-johnstonn)"
     )
-    st.sidebar.markdown("[Twitter / X](https://x.com/ethanjdev)")
+    st.sidebar.markdown("# [Twitter / X](https://x.com/ethanjdev)")
 
     if st.button("Summarize"):
         if input_method == "Upload a document":

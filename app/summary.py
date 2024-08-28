@@ -1,4 +1,4 @@
-from app.magic import Magician
+from magic import Magician
 
 
 class Summary(Magician):
